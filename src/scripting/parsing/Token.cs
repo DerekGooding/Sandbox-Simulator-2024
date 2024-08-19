@@ -1,6 +1,6 @@
 namespace Sandbox_Simulator_2024.src.scripting.parsing;
 
-public class Token
+public class Token(string value, Token.TokenType type, int lineNumber)
 {
     public enum TokenType
     {
@@ -17,14 +17,7 @@ public class Token
         Ignored
     }
 
-    public string Value { get; set; }
-    public TokenType Type { get; set; }
-    public int SourceLineNumber { get; set; }
-
-    public Token(string value, TokenType type, int lineNumber)
-    {
-        Value = value;
-        Type = type;
-        SourceLineNumber = lineNumber;
-    }
+    public string Value { get; set; } = value;
+    public TokenType Type { get; set; } = type;
+    public int SourceLineNumber { get; set; } = lineNumber;
 }

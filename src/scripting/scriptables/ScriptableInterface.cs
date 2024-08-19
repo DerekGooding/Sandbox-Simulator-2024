@@ -4,7 +4,7 @@ using Sandbox_Simulator_2024.src.backend;
 using System;
 using Identifier = string;
 
-public class ScriptableInterface : IScriptable
+public class ScriptableInterface(Identifier identifier) : IScriptable
 {
     public interface IProperty { PropertyType PropertyType { get; } }
 
@@ -17,13 +17,9 @@ public class ScriptableInterface : IScriptable
         Action,
     }
 
-    public Identifier identifier { get; private set; }
+    public Identifier identifier { get; } = identifier;
     readonly Dictionary<Identifier, object> properties = new();
 
-    public ScriptableInterface(Identifier identifier)
-    {
-        this.identifier = identifier;
-    }
     public bool AddProperty(string propertyType, Identifier propertyName)
     {
         if (properties.ContainsKey(propertyName))
