@@ -44,9 +44,9 @@ public static class NameGenerator
         "edo", "otu", "aki",
     ];
 
-    private static HashSet<string> usedNames = new();
+    private static readonly HashSet<string> usedNames = [];
 
-    private static Random r = Random.Shared;
+    private static readonly Random r = Random.Shared;
 
     public static string GenerateName()
     {
@@ -161,29 +161,15 @@ public static class NameGenerator
     }
 
     private static string PartialName()
-    {
+        => r.NextSingle() > 0.5f
+            ? GenerateConsonant() + OneOrTwoVowels() + GenerateConsonant()
+            : GenerateVowel() + OneOrTwoConsonants() + GenerateVowel();
 
-        if (r.NextSingle() > 0.5f)
-        {
-            return GenerateConsonant() + OneOrTwoVowels() + GenerateConsonant();
-        }
-        else
-        {
-            return GenerateVowel() + OneOrTwoConsonants() + GenerateVowel();
-        }
-    }
+    private static string OneOrTwoConsonants() 
+        => r.NextSingle() > 0.5f ? GenerateConsonant() : GenerateConsonant() + GenerateConsonant();
 
-    private static string OneOrTwoConsonants()
-    {
-        if (r.NextSingle() > 0.5f) return GenerateConsonant();
-        else return GenerateConsonant() + GenerateConsonant();
-    }
-
-    private static string OneOrTwoVowels()
-    {
-        if (r.NextSingle() > 0.5f) return GenerateVowel();
-        else return GenerateVowel() + GenerateVowel();
-    }
+    private static string OneOrTwoVowels() 
+        => r.NextSingle() > 0.5f ? GenerateVowel() : GenerateVowel() + GenerateVowel();
 
     private static string GenerateConsonant() => consonants[r.Next(0, consonants.Length)].ToString();
 
