@@ -5,10 +5,9 @@ namespace Network.Core;
 public abstract class Node : IName
 {
     public string Name { get; set; } = "No Name";
-    protected Random random = new();
 
-    protected ConcurrentBag<Packet> ingressPackets { get; } = new();
-    protected ConcurrentBag<Packet> egressPackets { get; } = new();
+    protected ConcurrentBag<Packet> ingressPackets { get; } = [];
+    protected ConcurrentBag<Packet> egressPackets { get; } = [];
     //protected ConcurrentBag<Packet> packetCache = new();
 
     public abstract void Receive(Packet packet);
@@ -26,8 +25,6 @@ public abstract class Node : IName
         ingressPackets.Clear();
     }
 
-    public IEnumerable<T> GetPackets<T>() where T : Packet
-    {
-        return egressPackets.OfType<T>().Concat(ingressPackets.OfType<T>()).Concat(ReportPackets<T>());
-    }
+    public IEnumerable<T> GetPackets<T>() where T : Packet 
+        => egressPackets.OfType<T>().Concat(ingressPackets.OfType<T>()).Concat(ReportPackets<T>());
 }

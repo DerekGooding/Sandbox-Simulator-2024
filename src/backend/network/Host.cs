@@ -34,11 +34,6 @@ public class Host : Node
     {
     }
 
-    public override void Step()
-    {
-        base.Step();
-    }
-
     public override void Transmit()
     {
         foreach (Packet packet in egressPackets)
@@ -50,13 +45,7 @@ public class Host : Node
         egressPackets.Clear();
     }
 
-    public Router GetRouter()
-    {
-        return (Router)Network.GetNode(DefaultGateway);
-    }
+    public Router GetRouter() => (Router)Network.GetNode(DefaultGateway);
 
-    public override IEnumerable<T> ReportPackets<T>()
-    {
-        return Array.Empty<T>();
-    }
+    public override IEnumerable<T> ReportPackets<T>() => [];
 }

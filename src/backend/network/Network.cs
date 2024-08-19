@@ -1,6 +1,7 @@
+using System.Linq;
+
 namespace Network.Core;
 
-using Sandbox_Simulator_2024.PrintTools;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Reflection;
@@ -9,35 +10,35 @@ public class Network
 {
     //
     //
-    // NOTE: We use reflections to reset the network, so all bools float and ints will be default values, hence the defualt usage as a reminder
+    // NOTE: We use reflections to reset the network, so all bools float and ints will be default values, hence the default usage as a reminder
     //
     //
 
-    private static ConcurrentDictionary<string, Node> nodes = new();
-    private static ConcurrentDictionary<string, List<string>> links = new();
+    private static readonly ConcurrentDictionary<string, Node> nodes = new();
+    private static readonly ConcurrentDictionary<string, List<string>> links = new();
 
-    public static bool isRunning { get; private set; } = default;
-    public static bool debugText = default;
+    public static bool isRunning { get; private set; }
+    public static bool debugText;
 
-    public static int numPacketsSent { get; private set; } = default;
-    public static int numPacketsDelivered { get; private set; } = default;
+    public static int numPacketsSent { get; private set; }
+    public static int numPacketsDelivered { get; private set; }
 
-    public static int tick { get; private set; } = default;
-    public static int millisecondsPerTick { get; private set; } = default;
+    public static int tick { get; private set; }
+    public static int millisecondsPerTick { get; private set; }
 
     private static Action PostStep = () => { };
 
-    private static int pauseQueued = default;
-    private static int paused = default;
+    private static int pauseQueued;
+    private static int paused;
 
     //| START / STEP
 
     public static async Task Start(string networkName, int _millisecondsPerTick = 10)
     {
         millisecondsPerTick = _millisecondsPerTick;
-        Console.ForegroundColor = ConsoleColor.Yellow;
-        Console.WriteLine("Starting Network...");
-        Console.ResetColor();
+        ForegroundColor = ConsoleColor.Yellow;
+        WriteLine("Starting Network...");
+        ResetColor();
 
         // Collect all the routes from the routers neighbours
         foreach (var node in nodes.Values)
@@ -48,11 +49,11 @@ public class Network
         UpdateRoutingTables();
 
         isRunning = true;
-        Console.ForegroundColor = ConsoleColor.Green;
-        Console.WriteLine("Network Started");
-        Console.ForegroundColor = ConsoleColor.White;
-        Console.WriteLine("Stay tuned...\n");
-        Console.ResetColor();
+        ForegroundColor = ConsoleColor.Green;
+        WriteLine("Network Started");
+        ForegroundColor = ConsoleColor.White;
+        WriteLine("Stay tuned...\n");
+        ResetColor();
         await Task.CompletedTask;
 
         new Thread(async () =>
@@ -126,15 +127,9 @@ public class Network
         while (paused == 0) await Task.Delay(millisecondsPerTick);
     }
 
-    public static void Resume()
-    {
-        Interlocked.Exchange(ref paused, 0);
-    }
+    public static void Resume() => Interlocked.Exchange(ref paused, 0);
 
-    public static void AddListener(Action action)
-    {
-        PostStep += action;
-    }
+    public static void AddListener(Action action) => PostStep += action;
 
     public static void UpdateRoutingTables()
     {
@@ -147,7 +142,7 @@ public class Network
         {
             updated = 0;
             counter++;
-            Console.WriteLine($"Broadcasting routing tables x{counter}");
+            WriteLine($"Broadcasting routing tables x{counter}");
             Parallel.ForEach(nodes.Values, node =>
             {
                 if (node is Router router)
@@ -158,13 +153,13 @@ public class Network
             });
             if (counter >= nodes.Count) break; // Max possible updates, assumes a chain of routers
         } while (updated == 1);
-        Console.WriteLine($"Routing tables updated in {counter} broadcasts and took {stopwatch.ElapsedMilliseconds / 1000f:F3} seconds\n");
+        WriteLine($"Routing tables updated in {counter} broadcasts and took {stopwatch.ElapsedMilliseconds / 1000f:F3} seconds\n");
     }
 
-    public async Task Reset(bool removePostStepListeners)
+    public static async Task Reset(bool removePostStepListeners)
     {
         await Pause();
-        Console.WriteLine("Resetting network...");
+        WriteLine("Resetting network...");
 
         // USe reflection to clear all static data to it's default state
         FieldInfo[] fields = typeof(Network).GetFields(BindingFlags.Static);
@@ -183,7 +178,7 @@ public class Network
         if (removePostStepListeners) PostStep = () => { };
 
         await Task.Delay(1000);
-        Console.WriteLine("Network reset");
+        WriteLine("Network reset");
     }
 
     public static void StepSerial()
@@ -277,9 +272,9 @@ public class Network
 
     public static void AddNodes(IEnumerable<Node> newNodes)
     {
-        foreach (Node node in newNodes)
+        foreach (var node in newNodes.Where(node => !nodes.ContainsKey(node.Name)))
         {
-            if (!nodes.ContainsKey(node.Name)) AddNode(node);
+            AddNode(node);
         }
     }
 
@@ -305,21 +300,20 @@ public class Network
         if (!allowed) throw new ArgumentException($"Invalid link: one or both nodes do not exist {source} {destination}");
         var sourceNode = nodes[source];
         var destNode = nodes[destination];
-        allowed &=
-        (
-            (sourceNode is Router || sourceNode.GetType().IsSubclassOf(typeof(Router))) &&
-            (destNode is Router || destNode.GetType().IsSubclassOf(typeof(Router)))
+        _ = (
+            ((sourceNode is Router || sourceNode.GetType().IsSubclassOf(typeof(Router))) &&
+            (destNode is Router || destNode.GetType().IsSubclassOf(typeof(Router))))
             ||
-            (sourceNode is Router || sourceNode.GetType().IsSubclassOf(typeof(Router))) &&
-            (destNode is Host || destNode.GetType().IsSubclassOf(typeof(Host)))
+            ((sourceNode is Router || sourceNode.GetType().IsSubclassOf(typeof(Router))) &&
+            (destNode is Host || destNode.GetType().IsSubclassOf(typeof(Host))))
             ||
-            (sourceNode is Host || sourceNode.GetType().IsSubclassOf(typeof(Host))) &&
-            (destNode is Router || destNode.GetType().IsSubclassOf(typeof(Router)))
+            ((sourceNode is Host || sourceNode.GetType().IsSubclassOf(typeof(Host))) &&
+            (destNode is Router || destNode.GetType().IsSubclassOf(typeof(Router))))
         );
 
         // Make sure the nodes already have entries
-        if (!links.ContainsKey(source)) links.TryAdd(source, new List<string>());
-        if (!links.ContainsKey(destination)) links.TryAdd(destination, new List<string>());
+        if (!links.ContainsKey(source)) links.TryAdd(source, []);
+        if (!links.ContainsKey(destination)) links.TryAdd(destination, []);
 
         if (links[source].Contains(destination)) { } //Console.WriteLine("Link already exists");
         else links[source].Add(destination);
@@ -333,11 +327,11 @@ public class Network
 
     public static void AddChain(out List<Router> routers, params string[] routerNames)
     {
-        routers = new List<Router>();
+        routers = [];
         for (int i = 0; i < routerNames.Length; i++)
         {
             string routerName = routerNames[i];
-            Console.WriteLine($"Creating chain link router {routerName}");
+            WriteLine($"Creating chain link router {routerName}");
             routers.Add((Router)AddNode(new Router(routerName)));
             if (i > 0) AddLink(routerNames[i - 1], routerName);
         }
@@ -348,14 +342,14 @@ public class Network
     public static void AddHubAndSpoke<T>(out Router router, out List<Host> hosts, string routerName, params string[] hostNames)
     {
         // Create the hub
-        Console.WriteLine($"Creating hub router {routerName}");
+        WriteLine($"Creating hub router {routerName}");
         router = (Router)AddNode(new Router(routerName));
 
         // Create the spokes
-        hosts = new List<Host>();
+        hosts = [];
         foreach (string hostName in hostNames)
         {
-            Console.WriteLine($"Creating spoke host {hostName}");
+            WriteLine($"Creating spoke host {hostName}");
             hosts.Add((Host)AddNode(new Host(hostName, routerName)));
             AddLink(routerName, hostName);
         }
@@ -371,8 +365,7 @@ public class Network
         {
             foreach (Node otherNode in nodes)
             {
-                if (node == otherNode) continue;
-                if (node is Host && otherNode is Host) continue;
+                if (node == otherNode || (node is Host && otherNode is Host)) continue;
                 AddLink(node.Name, otherNode.Name);
             }
         }
@@ -380,8 +373,8 @@ public class Network
 
     public static void OneToMany(Node one, IEnumerable<Node> many)
     {
-        if (one is null) throw new ArgumentNullException("One node is null");
-        if (many is null) throw new ArgumentNullException("Many nodes is null");
+        ArgumentNullException.ThrowIfNull(one);
+        ArgumentNullException.ThrowIfNull(many);
         if (many.Contains(one)) throw new ArgumentException("One node is in the many nodes");
 
         if (!nodes.ContainsKey(one.Name)) AddNode(one);
@@ -391,9 +384,9 @@ public class Network
 
     public static bool LinkExists(Packet packet)
     {
-        if (!links.ContainsKey(packet.Source)) return false;
-        if (!links.ContainsKey(packet.Destination)) return false;
-        return links[packet.Source].Contains(packet.Destination) || links[packet.Destination].Contains(packet.Source);
+        if (!links.TryGetValue(packet.Source, out List<string>? value)) return false;
+        if (!links.TryGetValue(packet.Destination, out List<string>? value2)) return false;
+        return value.Contains(packet.Destination) || value2.Contains(packet.Source);
     }
 
     //| Routing
@@ -419,13 +412,13 @@ public class Network
     /// <summary>
     /// Sends all packets to their next hop address, obeying link, and routing rules.
     /// </summary>
-    private static void Send(IEnumerable<Packet> packets)
-    {
-        CheckRunning();
-        if (packets is null) return;
-        if (packets.Count() == 0) return;
-        foreach (Packet packet in packets) Send(packet);
-    }
+    //private static void Send(IEnumerable<Packet> packets)
+    //{
+    //    CheckRunning();
+    //    if (packets is null) return;
+    //    if (packets.Count() == 0) return;
+    //    foreach (Packet packet in packets) Send(packet);
+    //}
 
     /// <summary>
     /// Sends a packet to it's next hop address, not obeying link, and routing rules when needed.
@@ -447,8 +440,14 @@ public class Network
         }
 
         //>> Cheat conditions
-        if (packet.TTL <= 4) Cheat(packet, "the packet is about to die");
-        else if (packet.NextHop == string.Empty) Cheat(packet, "the next hop is unknown");
+        if (packet.TTL <= 4)
+        {
+            Cheat(packet, "the packet is about to die");
+        }
+        else if (packet.NextHop?.Length == 0)
+        {
+            Cheat(packet, "the next hop is unknown");
+        }
         else
         {
             // Send the packet
@@ -460,8 +459,8 @@ public class Network
     public static void Cheat(Packet packet, string reason)
     {
         CheckRunning();
-        Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine($"Packet from {packet.Source} to {packet.Destination} was cheated because {reason}");
+        ForegroundColor = ConsoleColor.Red;
+        WriteLine($"Packet from {packet.Source} to {packet.Destination} was cheated because {reason}");
         if (packet is not IUDP) GetNode(packet.Destination).Receive(packet);
         else Drop(packet);
     }

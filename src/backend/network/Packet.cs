@@ -4,7 +4,7 @@ public class Packet : IName
 {
     public const int DEFAULT_TLL = 256;
 
-    public Action onDelivered = new Action(() => { });
+    public Action onDelivered = () => { };
 
     public string Name { get; set; } = "Nameless Packet";
     public string Source = string.Empty;
@@ -15,10 +15,7 @@ public class Packet : IName
 
     public bool traceRoute = false;
 
-    public Packet()
-    {
-        SetTTL();
-    }
+    public Packet() => SetTTL();
 
     public Packet(string name)
     {
@@ -35,18 +32,15 @@ public class Packet : IName
         SetTTL();
     }
 
-    private void SetTTL()
-    {
-        TTL = Math.Max(DEFAULT_TLL, Network.GetNodeCount());
-    }
+    private void SetTTL() => TTL = Math.Max(DEFAULT_TLL, Network.GetNodeCount());
 
     public void Step()
     {
         if (traceRoute)
         {
-            Console.ForegroundColor = ConsoleColor.Magenta;
-            Console.WriteLine($"Trace Route: Packet {Name} is at {LastHop} and is going to {NextHop}");
-            Console.ResetColor();
+            ForegroundColor = ConsoleColor.Magenta;
+            WriteLine($"Trace Route: Packet {Name} is at {LastHop} and is going to {NextHop}");
+            ResetColor();
         }
 
         if (this is not IEntity)
@@ -55,8 +49,5 @@ public class Packet : IName
         }
     }
 
-    public void Deliver()
-    {
-        onDelivered();
-    }
+    public void Deliver() => onDelivered();
 }

@@ -4,31 +4,21 @@ namespace Network.Core;
 
 public class Router : Node
 {
-    public struct RoutingEntry
+    public struct RoutingEntry(string nextHop, int distance)
     {
-        public string NextHop;
-        public int Distance;
-
-        public RoutingEntry(string nextHop, int distance)
-        {
-            NextHop = nextHop;
-            Distance = distance;
-        }
+        public string NextHop = nextHop;
+        public int Distance = distance;
     }
 
-    private ConcurrentDictionary<string, RoutingEntry> routingTable = new();
+    private readonly ConcurrentDictionary<string, RoutingEntry> routingTable = new();
 
-    public Router(string name)
-    {
-        Name = name;
-    }
+    public Router(string name) => Name = name;
 
     public void CollectNeighbourRoutes()
     {
-        var neighbours = Network.GetNeighbours(Name);
-        foreach (var neighbour in neighbours)
+        foreach (var neighbour in Network.GetNeighbours(Name))
         {
-            //Console.WriteLine($"{Name} is adding inital route to {neighbour}");
+            //Console.WriteLine($"{Name} is adding initial route to {neighbour}");
             routingTable[neighbour] = new RoutingEntry(neighbour, 1);
         }
     }
@@ -39,9 +29,11 @@ public class Router : Node
         if (packet.Destination == Name) // If the packet is for this router
         {
             Network.Delivered(packet);
-            return;
         }
-        else ingressPackets.Add(packet); // Route the packet
+        else
+        {
+            ingressPackets.Add(packet); // Route the packet
+        }
     }
 
     public override void Step()
@@ -69,7 +61,7 @@ public class Router : Node
     {
         packet.Step();
         packet.LastHop = Name;
-        bool chance = random.NextSingle() < 0.9;
+        bool chance = Random.Shared.NextSingle() < 0.9;
 
         // Get a route from the routing table, but only 90% of the time. 10% of the time, choose a random route to midigate loops
         if (routingTable.TryGetValue(packet.Destination, out var entry) && chance)
@@ -96,10 +88,8 @@ public class Router : Node
         var neighbours = Network.GetNeighbours(Name);
         Parallel.ForEach(neighbours, neighbour =>
         {
-            var neighborNode = Network.GetNode(neighbour) as Router;
-            if (neighborNode is null) return;
-
-            updated |= neighborNode.UpdateRoutingTable(Name, routingTable);
+            if (Network.GetNode(neighbour) is Router neighborNode)
+                updated |= neighborNode.UpdateRoutingTable(Name, routingTable);
         });
         return updated;
     }
@@ -113,18 +103,16 @@ public class Router : Node
             var neighborEntry = entry.Value;
             var newDistance = neighborEntry.Distance + 1;
 
-            if (!routingTable.ContainsKey(destination) || routingTable[destination].Distance > newDistance)
+            if (!routingTable.TryGetValue(destination, out RoutingEntry value) || value.Distance > newDistance)
             {
+                value = new RoutingEntry(neighbor, newDistance);
                 //Console.WriteLine($"Updating route to {destination} via neighbour {neighbor}'s routing table");
-                routingTable[destination] = new RoutingEntry(neighbor, newDistance);
+                routingTable[destination] = value;
                 updated = true;
             }
         }
         return updated;
     }
 
-    public override IEnumerable<T> ReportPackets<T>()
-    {
-        return Array.Empty<T>();
-    }
+    public override IEnumerable<T> ReportPackets<T>() => [];
 }

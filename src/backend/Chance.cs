@@ -29,9 +29,8 @@ public class Chance
     public const float OncePerMonth = 1f / (60f * 24f * 30f);
     public const float OncePerYear = 1f / (60f * 24f * 365f);
 
-    private Random random = new();
-    private Func<float> determineMin = () => 0f;
-    private Func<float> determineMax = () => 0.5f;
+    private readonly Func<float> determineMin = () => 0f;
+    private readonly Func<float> determineMax = () => 0.5f;
 
     /// <summary>
     /// Create a new chance object with a 50% chance of rolling true.
@@ -71,12 +70,9 @@ public class Chance
     /// </summary>
     public bool Roll()
     {
-        float value = (float)random.NextDouble();
+        float value = (float)Random.Shared.NextDouble();
         return value > determineMin() && value < determineMax();
     }
 
-    public bool NotRoll()
-    {
-        return !Roll();
-    }
+    public bool NotRoll() => !Roll();
 }
