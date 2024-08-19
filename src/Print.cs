@@ -18,19 +18,19 @@ public static class Print
 #pragma warning restore CS0414
 #endif
 
-    public static bool printFlag { get; private set; } = false;
-    private static ConcurrentBag<DayPrint> dayMessages = new();
+    public static bool printFlag { get; private set; }
+    private static ConcurrentBag<DayPrint> dayMessages = [];
 
     public static void Pause(string action = "continue")
     {
         Line($"Press any key to {action}...");
-        Console.ReadKey();
+        ReadKey();
         Console.Clear();
     }
 
     public static void Line()
     {
-        Console.WriteLine();
+        WriteLine();
     }
 
     public static void Clear()
@@ -39,10 +39,7 @@ public static class Print
         ResetSkip();
     }
 
-    public static void Line(object o)
-    {
-        ByWord(o);
-    }
+    public static void Line(object o) => ByWord(o);
 
     public static void Meta(object o, bool appendTime = false)
     {
@@ -50,7 +47,7 @@ public static class Print
         else ByWord(o);
         ConsoleResetColor();
 
-        Console.ForegroundColor = ConsoleColor.Green;
+        ForegroundColor = ConsoleColor.Green;
         ByWord(o);
         ConsoleResetColor();
         printFlag = true;
@@ -64,7 +61,7 @@ public static class Print
 
     public static void PrintWithDelay(object o, int ms)
     {
-        Console.WriteLine(o.ToString());
+        WriteLine(o.ToString());
         Thread.Sleep(ms);
     }
 
@@ -77,15 +74,12 @@ public static class Print
 #endif
     }
 
-    public static void CollectUpdateInt(string message, ref int currentValue)
-    {
-        int result = CollectInt(message, currentValue);
-    }
+    public static void CollectUpdateInt(string message, ref int currentValue) => _ = CollectInt(message, currentValue);
 
     public static int CollectInt(string message, int defaultValue = 0)
     {
-        Console.Write(message + $" (leave blank for {defaultValue}): ");
-        string input = Console.ReadLine()!;
+        Write(message + $" (leave blank for {defaultValue}): ");
+        string input = ReadLine()!;
         if (string.IsNullOrWhiteSpace(input))
         {
             return defaultValue;
@@ -97,7 +91,7 @@ public static class Print
         else
         {
             // Erase the current line and replace with invalid message
-            Console.WriteLine("Invalid input.");
+            WriteLine("Invalid input.");
             return CollectInt(message);
         }
     }
@@ -105,14 +99,14 @@ public static class Print
     public static bool GiveOptionTo(string option)
     {
         ByWord($"Would you like to {option}? (y/n)");
-        Console.Write(">> ");
+        Write(">> ");
 
         while (true)
         {
-            ConsoleKeyInfo key = Console.ReadKey();
+            ConsoleKeyInfo key = ReadKey();
             if (key.Key == ConsoleKey.Y)
             {
-                Console.WriteLine();
+                WriteLine();
                 Pause();
                 Clear();
                 return true;
@@ -120,14 +114,14 @@ public static class Print
             else
             if (key.Key == ConsoleKey.N)
             {
-                Console.WriteLine();
+                WriteLine();
                 Pause();
                 Clear();
                 return false;
             }
             else
             {
-                Console.Write("\b \b");
+                Write("\b \b");
             }
         }
     }
@@ -135,8 +129,8 @@ public static class Print
     private static void ByWord(object o, bool writeLine = true)
     {
 #if DEBUG
-        if (writeLine) Console.WriteLine(o);
-        else Console.Write(o);
+        if (writeLine) WriteLine(o);
+        else Write(o);
 #else
         if (o == null) return;
         string? raw = o.ToString();
@@ -176,7 +170,7 @@ public static class Print
 
     public static bool PrintCache()
     {
-        if (dayMessages.Count == 0) return false;
+        if (dayMessages.IsEmpty) return false;
 
         // Sort by time
         dayMessages = new(dayMessages.OrderBy(x => x.time));
@@ -194,44 +188,32 @@ public static class Print
         if (message.message == null) return;
 
         ConsoleResetColor();
-        Console.ForegroundColor = ConsoleColor.White;
-        Console.Write(Tickuffix() + " ");
-        Console.ForegroundColor = message.color;
+        ForegroundColor = ConsoleColor.White;
+        Write(Tickuffix() + " ");
+        ForegroundColor = message.color;
         ByWord(message.message);
         ConsoleResetColor();
         printFlag = true;
     }
 
-    public static string Tickuffix()
-    {
-        return $"[Network tick: {Network.tick}]";
-    }
+    public static string Tickuffix() => $"[Network tick: {Network.tick}]";
 
-    public static void Immediate()
-    {
-        Console.WriteLine();
-    }
+    public static void Immediate() => WriteLine();
 
-    public static void Immediate(object o)
-    {
-        Console.WriteLine(o);
-    }
+    public static void Immediate(object o) => WriteLine(o);
 
-    public static void Delay(int ms = 1000)
-    {
-        Thread.Sleep(ms);
-    }
+    public static void Delay(int ms = 1000) => Thread.Sleep(ms);
 
     public static void ConsoleResetColor()
     {
-        Console.BackgroundColor = ConsoleColor.Black;
-        Console.ForegroundColor = ConsoleColor.White;
+        BackgroundColor = ConsoleColor.Black;
+        ForegroundColor = ConsoleColor.White;
     }
 
     public static void ClearLine()
     {
-        Console.SetCursorPosition(0, Console.CursorTop);
-        Console.Write(new string(' ', Console.WindowWidth));
-        Console.SetCursorPosition(0, Console.CursorTop - 1);
+        SetCursorPosition(0, CursorTop);
+        Write(new string(' ', WindowWidth));
+        SetCursorPosition(0, CursorTop - 1);
     }
 }

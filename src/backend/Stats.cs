@@ -1,19 +1,17 @@
 namespace Sandbox_Simulator_2024;
 
-// Applicapable to any creature entity in the game
+// Applicable to any creature entity in the game
 public class Stats
 {
     private const float PersonVariabilitySigma = 0.1f;
 
-    private static readonly Random random = new Random();
-
     public static float GaussianBetween01(float sigma)
     {
-        float mean = 0.5f; // Centered at 0.5 to keep the values within [0, 1]
-        float u1 = random.NextSingle();
-        float u2 = random.NextSingle();
+        const float mean = 0.5f; // Centered at 0.5 to keep the values within [0, 1]
+        float u1 = Random.Shared.NextSingle();
+        float u2 = Random.Shared.NextSingle();
         float z0 = MathF.Sqrt(-2.0f * MathF.Log(u1)) * MathF.Cos(2.0f * MathF.PI * u2);
-        float value = mean + sigma * z0;
+        float value = mean + (sigma * z0);
 
         // Clamp the result between 0 and 1 to keep within bounds
         value = MathF.Max(0, MathF.Min(1, value));
@@ -24,10 +22,10 @@ public class Stats
     // Add a
     public class TraitOperators
     {
-        // Get all float from the derived class and apple the correct operator to them, eaith +, or /, or recombine (for reproduction later down the line)
+        // Get all float from the derived class and apple the correct operator to them, either +, or /, or recombine (for reproduction later down the line)
         public static TraitOperators operator +(TraitOperators a, TraitOperators b)
         {
-            TraitOperators result = new TraitOperators();
+            TraitOperators result = new();
             foreach (var property in a.GetType().GetProperties())
             {
                 if (property.PropertyType == typeof(float))
@@ -40,7 +38,7 @@ public class Stats
 
         public static TraitOperators operator /(TraitOperators a, TraitOperators b)
         {
-            TraitOperators result = new TraitOperators();
+            TraitOperators result = new();
             foreach (var property in a.GetType().GetProperties())
             {
                 if (property.PropertyType == typeof(float))
@@ -57,11 +55,11 @@ public class Stats
         public class Immutable : TraitOperators
         {
             public float Luck { get; set; } = GaussianBetween01(PersonVariabilitySigma);
-            public float AddictionPrepensity { get; set; } = GaussianBetween01(PersonVariabilitySigma);
+            public float AddictionPropensity { get; set; } = GaussianBetween01(PersonVariabilitySigma);
             public float Empathy { get; set; } = GaussianBetween01(PersonVariabilitySigma);
             public float Happiness { get; set; } = GaussianBetween01(PersonVariabilitySigma);
             public float Criminality { get; set; } = GaussianBetween01(PersonVariabilitySigma);
-            public float Agression { get; set; } = GaussianBetween01(PersonVariabilitySigma);
+            public float Aggression { get; set; } = GaussianBetween01(PersonVariabilitySigma);
         }
 
         public class Variable : TraitOperators
@@ -74,59 +72,59 @@ public class Stats
             public float SocialFulfillment { get; set; } = GaussianBetween01(PersonVariabilitySigma);
         }
 
-        public Immutable immutable = new Immutable();
-        public Variable variable = new Variable();
+        public Immutable immutable = new();
+        public Variable variable = new();
     }
 
-    public Traits traits = new Traits();
+    public Traits traits = new();
 
-    public bool RollHealth() => random.NextSingle() < DetermineHealth();
+    public bool RollHealth() => Random.Shared.NextSingle() < DetermineHealth();
 
     public float DetermineHealth() => traits.variable.Health * traits.immutable.Happiness;
 
-    public bool RollIntelligence() => random.NextSingle() < DetermineIntelligence();
+    public bool RollIntelligence() => Random.Shared.NextSingle() < DetermineIntelligence();
 
     public float DetermineIntelligence() => traits.variable.Health * Math.Min(traits.variable.Intelligence, traits.immutable.Criminality);
 
-    public bool RollLuck() => random.NextSingle() < traits.immutable.Luck;
+    public bool RollLuck() => Random.Shared.NextSingle() < traits.immutable.Luck;
 
-    public bool RollAddictionPrepensity() => random.NextSingle() < DetermineAddictionPrepensity();
+    public bool RollAddictionPropensity() => Random.Shared.NextSingle() < DetermineAddictionPropensity();
 
-    public float DetermineAddictionPrepensity() => (1f - traits.variable.Health) * Math.Min(Math.Min(traits.immutable.AddictionPrepensity, traits.immutable.Luck), traits.variable.Intelligence);
+    public float DetermineAddictionPropensity() => (1f - traits.variable.Health) * Math.Min(Math.Min(traits.immutable.AddictionPropensity, traits.immutable.Luck), traits.variable.Intelligence);
 
-    public bool RollEmpathy() => random.NextSingle() < DetermineEmpathy();
+    public bool RollEmpathy() => Random.Shared.NextSingle() < DetermineEmpathy();
 
     public float DetermineEmpathy() => (1f - traits.variable.Addiction) * traits.immutable.Empathy;
 
-    public bool RollSurvivalOdds() => random.NextSingle() < DetermineSurvivalOdds();
+    public bool RollSurvivalOdds() => Random.Shared.NextSingle() < DetermineSurvivalOdds();
 
     public float DetermineSurvivalOdds() => ((traits.variable.Health + traits.variable.Intelligence + traits.immutable.Luck) / 3f);
 
-    public bool RollCharisma() => random.NextSingle() < DetermineCharisma();
+    public bool RollCharisma() => Random.Shared.NextSingle() < DetermineCharisma();
 
     public float DetermineCharisma() => traits.variable.Health * Math.Max(1f, ((traits.variable.Intelligence + traits.immutable.Luck) / 2f) + traits.variable.SocialFulfillment);
 
-    public bool RollStrength() => random.NextSingle() < DetermineStrength();
+    public bool RollStrength() => Random.Shared.NextSingle() < DetermineStrength();
 
-    public float DetermineStrength() => traits.variable.Health * ((traits.immutable.Agression + traits.variable.Energy) / 2f);
+    public float DetermineStrength() => traits.variable.Health * ((traits.immutable.Aggression + traits.variable.Energy) / 2f);
 
-    public bool RollMentalHealth() => random.NextSingle() < DetermineMentalHealth();
+    public bool RollMentalHealth() => Random.Shared.NextSingle() < DetermineMentalHealth();
 
-    public float DetermineMentalHealth() => Math.Min(1f - traits.immutable.Agression, Math.Min((1f - traits.immutable.Criminality), (1f - traits.variable.Addiction))) * Math.Max(((traits.variable.Intelligence + traits.immutable.Luck) / 2f), traits.variable.SocialFulfillment);
+    public float DetermineMentalHealth() => Math.Min(1f - traits.immutable.Aggression, Math.Min((1f - traits.immutable.Criminality), (1f - traits.variable.Addiction))) * Math.Max(((traits.variable.Intelligence + traits.immutable.Luck) / 2f), traits.variable.SocialFulfillment);
 
-    public bool RollEnergy() => random.NextSingle() < DetermineEnergy();
+    public bool RollEnergy() => Random.Shared.NextSingle() < DetermineEnergy();
 
     public float DetermineEnergy() => (1f - traits.variable.Hunger) * Math.Max(0, ((traits.variable.Energy + traits.immutable.Happiness) / 2f) - traits.variable.Addiction);
 
-    public bool RollHappiness() => random.NextSingle() < DetermineHappiness();
+    public bool RollHappiness() => Random.Shared.NextSingle() < DetermineHappiness();
 
     public float DetermineHappiness() => traits.variable.Health * (1f - traits.variable.Addiction) * ((traits.immutable.Happiness + traits.variable.Energy + traits.variable.SocialFulfillment) / 3f);
 
-    public bool RollCriminality() => random.NextSingle() < DetermineCriminality();
+    public bool RollCriminality() => Random.Shared.NextSingle() < DetermineCriminality();
 
     public float DetermineCriminality() => (1f - ((traits.immutable.Empathy + traits.variable.Intelligence) / 2f)) * Math.Max(traits.immutable.Criminality, traits.immutable.Luck);
 
-    public bool RollAgression() => random.NextSingle() < DetermineAgression();
+    public bool RollAggression() => Random.Shared.NextSingle() < DetermineAggression();
 
-    public float DetermineAgression() => (1f - traits.immutable.Empathy) * traits.immutable.Agression;
+    public float DetermineAggression() => (1f - traits.immutable.Empathy) * traits.immutable.Aggression;
 }
