@@ -1,4 +1,4 @@
-using Sandbox_Simulator_2024.src.scripting.scriptables;
+using Sandbox_Simulator_2024.src.scripting.scriptable;
 
 namespace Sandbox_Simulator_2024.src.scripting.parsing.parsers;
 

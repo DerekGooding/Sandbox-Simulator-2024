@@ -50,7 +50,6 @@ public static class NameGenerator
 
     public static string GenerateName()
     {
-
         try
         {
             string name = "";

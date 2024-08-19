@@ -1,5 +1,6 @@
-namespace Sandbox_Simulator_2024.src.scripting.scriptables;
+namespace Sandbox_Simulator_2024.src.scripting.scriptable;
 
+using Sandbox_Simulator_2024.src.backend;
 using System;
 using Identifier = string;
 
@@ -17,7 +18,7 @@ public class ScriptableInterface : IScriptable
     }
 
     public Identifier identifier { get; private set; }
-    Dictionary<Identifier, object> properties = new();
+    readonly Dictionary<Identifier, object> properties = new();
 
     public ScriptableInterface(Identifier identifier)
     {

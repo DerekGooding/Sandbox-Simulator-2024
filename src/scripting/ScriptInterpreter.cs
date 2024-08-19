@@ -1,6 +1,6 @@
 namespace Sandbox_Simulator_2024.src.scripting;
 using Sandbox_Simulator_2024.src.scripting.parsing;
-using Sandbox_Simulator_2024.src.scripting.scriptables;
+using Sandbox_Simulator_2024.src.scripting.scriptable;
 using Identifier = string;
 
 public class ScriptInterpreter

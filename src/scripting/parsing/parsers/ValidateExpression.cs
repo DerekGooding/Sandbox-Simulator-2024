@@ -1,5 +1,3 @@
-using Sandbox_Simulator_2024.src.scripting;
-
 namespace Sandbox_Simulator_2024.src.scripting.parsing.parsers;
 
 public class ValidateExpression : IParseStuff

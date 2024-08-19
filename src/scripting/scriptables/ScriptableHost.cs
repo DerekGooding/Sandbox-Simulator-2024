@@ -1,4 +1,4 @@
-namespace Sandbox_Simulator_2024.src.scripting.scriptables;
+namespace Sandbox_Simulator_2024.src.scripting.scriptable;
 using Sandbox_Simulator_2024.src.backend.network;
 using Identifier = string;
 

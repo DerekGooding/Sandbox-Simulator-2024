@@ -1,4 +1,4 @@
-namespace Sandbox_Simulator_2024.src.scripting.scriptables;
+namespace Sandbox_Simulator_2024.src.scripting.scriptable;
 using Identifier = string;
 
 public class ScriptableIdentifier : IScriptable
