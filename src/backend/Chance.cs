@@ -4,6 +4,7 @@ public class Chance
 {
     // Note: Assumes called rolls are in the time frame once per minutes.
     public const float OncePer2Minutes = 1f / 2f;
+
     public const float OncePer3Minutes = 1f / 3f;
     public const float OncePer4Minutes = 1f / 4f;
     public const float OncePer5Minutes = 1f / 5f;
@@ -28,24 +29,25 @@ public class Chance
     public const float OncePerMonth = 1f / (60f * 24f * 30f);
     public const float OncePerYear = 1f / (60f * 24f * 365f);
 
-    Random random = new();
-    Func<float> determineMin = () => 0f;
-    Func<float> determineMax = () => 0.5f;
-    
+    private Random random = new();
+    private Func<float> determineMin = () => 0f;
+    private Func<float> determineMax = () => 0.5f;
+
     /// <summary>
     /// Create a new chance object with a 50% chance of rolling true.
     /// </summary>
-    public Chance() { }
-    
+    public Chance()
+    { }
+
     /// <summary>
-    /// Create a new chance object with a specific chance of rolling true. The roll will be between 0f and 1f, and to roll true you must roll a value less that the given chance. Equivalent to (min: 0f, max: value).   
+    /// Create a new chance object with a specific chance of rolling true. The roll will be between 0f and 1f, and to roll true you must roll a value less that the given chance. Equivalent to (min: 0f, max: value).
     /// </summary>
     public Chance(float value)
     {
         determineMin = () => 0f;
         determineMax = () => value;
     }
-    
+
     /// <summary>
     /// Create a new chance object with a minimum and maximum value. The roll will be between 0f and 1f, and to roll true you must roll a value between Min and Max.
     /// </summary>
@@ -54,7 +56,7 @@ public class Chance
         determineMin = () => min;
         determineMax = () => max;
     }
-    
+
     /// <summary>
     /// Create a new chance object with a dynamic lambda value. The roll will be between 0f and 1f, and to roll true you must roll a value between Min and Max.
     /// </summary>
@@ -63,13 +65,13 @@ public class Chance
         determineMin = min;
         determineMax = max;
     }
-    
+
     /// <summary>
     ///  The roll will be between 0f and 1f, and to roll true you must roll a value between Min and Max.
     /// </summary>
     public bool Roll()
     {
-        float value = (float) random.NextDouble();
+        float value = (float)random.NextDouble();
         return value > determineMin() && value < determineMax();
     }
 

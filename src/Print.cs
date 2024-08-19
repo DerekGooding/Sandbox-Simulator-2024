@@ -1,12 +1,11 @@
 namespace Sandbox_Simulator_2024.PrintTools;
 
-using System.Collections.Concurrent;
 using Network.Core;
-
+using System.Collections.Concurrent;
 
 public static class Print
 {
-    struct DayPrint
+    private struct DayPrint
     {
         public int time;
         public string message;
@@ -19,8 +18,8 @@ public static class Print
 #pragma warning restore CS0414
 #endif
 
-    public static bool printFlag { get; private set; } = false;    
-    static ConcurrentBag<DayPrint> dayMessages = new();
+    public static bool printFlag { get; private set; } = false;
+    private static ConcurrentBag<DayPrint> dayMessages = new();
 
     public static void Pause(string action = "continue")
     {
@@ -58,8 +57,11 @@ public static class Print
     }
 
     public static void PrintWithDelay() => PrintWithDelay("", 50);
+
     public static void PrintWithDelay(int ms) => PrintWithDelay("", ms);
+
     public static void PrintWithDelay(object o) => PrintWithDelay(o, 50);
+
     public static void PrintWithDelay(object o, int ms)
     {
         Console.WriteLine(o.ToString());
@@ -67,13 +69,14 @@ public static class Print
     }
 
     public static void ClearPrintFlag() => printFlag = false;
+
     public static void ResetSkip()
     {
-        #if !DEBUG
+#if !DEBUG
         fastPrint = false;
-        #endif
+#endif
     }
-    
+
     public static void CollectUpdateInt(string message, ref int currentValue)
     {
         int result = CollectInt(message, currentValue);
@@ -129,7 +132,7 @@ public static class Print
         }
     }
 
-    static void ByWord(object o, bool writeLine = true)
+    private static void ByWord(object o, bool writeLine = true)
     {
 #if DEBUG
         if (writeLine) Console.WriteLine(o);
@@ -165,43 +168,40 @@ public static class Print
 #endif
     }
 
-
     public static void Cache(object? o, ConsoleColor color = ConsoleColor.White)
     {
         printFlag = true;
-        dayMessages.Add(new DayPrint { message = o!.ToString()!, color = color, time = Network.tick % (24*60)});
+        dayMessages.Add(new DayPrint { message = o!.ToString()!, color = color, time = Network.tick % (24 * 60) });
     }
-    
+
     public static bool PrintCache()
     {
-        if(dayMessages.Count == 0) return false;
-        
+        if (dayMessages.Count == 0) return false;
+
         // Sort by time
         dayMessages = new(dayMessages.OrderBy(x => x.time));
-        
+
         foreach (var message in dayMessages)
         {
-            
             DayInternal(message);
         }
         dayMessages.Clear();
         return true;
     }
 
-
-    static void DayInternal(DayPrint message)
+    private static void DayInternal(DayPrint message)
     {
         if (message.message == null) return;
 
         ConsoleResetColor();
         Console.ForegroundColor = ConsoleColor.White;
-        Console.Write(Tickuffix() + " "); 
+        Console.Write(Tickuffix() + " ");
         Console.ForegroundColor = message.color;
         ByWord(message.message);
         ConsoleResetColor();
         printFlag = true;
     }
-    
+
     public static string Tickuffix()
     {
         return $"[Network tick: {Network.tick}]";

@@ -17,7 +17,7 @@ public class ScriptInterpreter
 
     List<Identifier> allIdentifiers = new();
     List<IScriptable> scriptables = new();
-    
+
     Dictionary<Identifier, ScriptableInterface> interfaces = new();
 
     public ScriptInterpreter(string script)
@@ -28,30 +28,30 @@ public class ScriptInterpreter
         Console.WriteLine();
         Console.WriteLine(parseResult.Message);
     }
-    
+
     public ParseResult RegisterIdentifier(ScriptableType scriptableType, Identifier identifier)
     {
         //>> Check if the identifier exists
-        if(allIdentifiers.Contains(identifier))
+        if (allIdentifiers.Contains(identifier))
         {
             Console.ForegroundColor = ConsoleColor.Red;
             Console.Write("(duplicate) ");
             return new ParseResult(ParseResult.State.Failure, "Identifier already exists: " + identifier);
         }
-        
+
         //>> Register the identifier
         allIdentifiers.Add(identifier);
         Console.ForegroundColor = ConsoleColor.White;
         Console.Write($"({identifier} registered to allIdentifiers) ");
         return new ParseResult(ParseResult.State.Success, "Registered " + scriptableType + " with identifier: " + identifier);
     }
-    
+
     public ParseResult RegisterInterface(Identifier identifier, ScriptableInterface scriptableInterface)
     {
         //>> Register the interface identifier, this also checks for duplicates
         ParseResult parseResult = RegisterIdentifier(ScriptableType.Interface, identifier);
-        if(parseResult.state == ParseResult.State.Failure) return parseResult;
-    
+        if (parseResult.state == ParseResult.State.Failure) return parseResult;
+
         //>> Register the interface
         interfaces.Add(identifier, scriptableInterface);
         Console.Write($"({identifier} registered as interface) ");

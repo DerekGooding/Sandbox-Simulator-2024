@@ -1,9 +1,9 @@
 namespace Network.Core;
 
+using Sandbox_Simulator_2024.PrintTools;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Reflection;
-using Sandbox_Simulator_2024.PrintTools;
 
 public class Network
 {
@@ -12,7 +12,7 @@ public class Network
     // NOTE: We use reflections to reset the network, so all bools float and ints will be default values, hence the defualt usage as a reminder
     //
     //
-    
+
     private static ConcurrentDictionary<string, Node> nodes = new();
     private static ConcurrentDictionary<string, List<string>> links = new();
 
@@ -26,7 +26,7 @@ public class Network
     public static int millisecondsPerTick { get; private set; } = default;
 
     private static Action PostStep = () => { };
-    
+
     private static int pauseQueued = default;
     private static int paused = default;
 
@@ -55,8 +55,6 @@ public class Network
         Console.ResetColor();
         await Task.CompletedTask;
 
-        
-
         new Thread(async () =>
         {
             while (isRunning)
@@ -67,37 +65,37 @@ public class Network
                 //>>
                 await Step();
                 //<<
-                
+
                 const int hour = 60;
                 const int day = 24 * hour;
                 const int timeless = 1_000 * 365 * 24 * 60;
                 const int printTimeRate = hour;
-                
+
                 int currentHour = tick / hour;
                 int currentDay = tick / day;
                 int hourOfTheDay = (tick % day) / hour;
                 string age = string.Empty;
 
                 string AddS(int value, string s) => value == 1 ? $"{value} {s}" : $"{value} {s}s";
-                
+
                 age = tick switch
                 {
                     0 => string.Empty,
-                    
+
                     hour => "1 hour old",
-                    
+
                     < day => $"{AddS(currentHour, "hour")} old",
-                    
+
                     day => "1 day old",
-                    
+
                     < timeless when hourOfTheDay is 0 => $"{AddS(currentDay, "day")} old",
-                    
+
                     < timeless => $"{AddS(currentDay, "day")} and {AddS(hourOfTheDay, "hour")}",
-                    
+
                     _ => "Timeless"
                 };
                 if (tick % printTimeRate == 0f && age != string.Empty) Print.Cache($"{networkName} is {age}. Last tick {stopwatch.ElapsedMilliseconds}ms");
-                
+
                 //>>
                 PostStep();
                 //<<
@@ -121,13 +119,13 @@ public class Network
             }
         }).Start();
     }
-    
+
     public static async Task Pause()
     {
         Interlocked.Exchange(ref pauseQueued, 1);
         while (paused == 0) await Task.Delay(millisecondsPerTick);
     }
-    
+
     public static void Resume()
     {
         Interlocked.Exchange(ref paused, 0);
@@ -162,28 +160,28 @@ public class Network
         } while (updated == 1);
         Console.WriteLine($"Routing tables updated in {counter} broadcasts and took {stopwatch.ElapsedMilliseconds / 1000f:F3} seconds\n");
     }
-    
+
     public async Task Reset(bool removePostStepListeners)
     {
         await Pause();
         Console.WriteLine("Resetting network...");
-    
+
         // USe reflection to clear all static data to it's default state
         FieldInfo[] fields = typeof(Network).GetFields(BindingFlags.Static);
         foreach (FieldInfo field in fields)
         {
             if (field.FieldType == typeof(int)) field.SetValue(null, 0);
-            else if(field.FieldType == typeof(float)) field.SetValue(null, 0f);
+            else if (field.FieldType == typeof(float)) field.SetValue(null, 0f);
             else if (field.FieldType == typeof(bool)) field.SetValue(null, false);
         }
-        
+
         // Clear the nodes and links
         nodes.Clear();
         links.Clear();
-        
+
         // Remove the post step listeners
         if (removePostStepListeners) PostStep = () => { };
-        
+
         await Task.Delay(1000);
         Console.WriteLine("Network reset");
     }
@@ -206,13 +204,18 @@ public class Network
 
     //| GET
 
-
     public static IEnumerable<T> GetNodes<T>() where T : Node => nodes.Values.OfType<T>();
+
     public static IEnumerable<Node> GetNodes() => nodes.Values;
+
     public static Node GetNode(string nodeName) => nodes[nodeName];
+
     public static List<string> GetNeighbours(string nodeName) => links[nodeName];
+
     public static int GetNodeCount() => nodes.Count;
+
     public static IEnumerable<T> GetNodes<T>(Func<T, bool> predicate) where T : Node => nodes.Values.OfType<T>().Where(predicate);
+
     public static IEnumerable<Node> GetNodes(Func<Node, bool> predicate) => nodes.Values.Where(predicate);
 
     public static Node? GetRandomNode()
@@ -327,6 +330,7 @@ public class Network
     //| Functions do many things at once
 
     public static void AddChain(params string[] routerNames) => AddChain(out _, routerNames);
+
     public static void AddChain(out List<Router> routers, params string[] routerNames)
     {
         routers = new List<Router>();
@@ -340,6 +344,7 @@ public class Network
     }
 
     public static void AddHubAndSpoke<T>(string routerName, params string[] hostNames) => AddHubAndSpoke<T>(out _, out _, routerName, hostNames);
+
     public static void AddHubAndSpoke<T>(out Router router, out List<Host> hosts, string routerName, params string[] hostNames)
     {
         // Create the hub
@@ -414,7 +419,7 @@ public class Network
     /// <summary>
     /// Sends all packets to their next hop address, obeying link, and routing rules.
     /// </summary>
-    static void Send(IEnumerable<Packet> packets)
+    private static void Send(IEnumerable<Packet> packets)
     {
         CheckRunning();
         if (packets is null) return;
@@ -484,6 +489,7 @@ public class Network
     }
 
     public static async Task WaitForTicks(int numTicksMin, int numTicksMax) => await WaitForTicks(new Random().Next(numTicksMin, numTicksMax));
+
     public static async Task WaitForTicks(int numTicks)
     {
         int endTimer = tick + numTicks;

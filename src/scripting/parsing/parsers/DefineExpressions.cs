@@ -1,4 +1,5 @@
 namespace Sandbox_Simulator_2024.Scripting.Parsing.Parsers;
+
 using System.Collections.Generic;
 
 public class DefineExpression : IParseStuff
@@ -7,8 +8,8 @@ public class DefineExpression : IParseStuff
     {
         //>> Check counts
         if (tokens.Count() != 3) return new ParseResult(ParseResult.State.Skip, "");
-        
-        //>> Pull tokens 
+
+        //>> Pull tokens
         Token firstToken = tokens.First();
         Token secondToken = tokens.Skip(1).First();
         Token thirdToken = tokens.Skip(2).First();
@@ -20,7 +21,7 @@ public class DefineExpression : IParseStuff
             &&
             (thirdToken.Type != Token.TokenType.Keyword || thirdToken.Type != Token.TokenType.Identifier)
             ) return new ParseResult(ParseResult.State.Skip, "");
-            
+
         //>> Check second token
         if (secondToken.Value != "is") return new ParseResult(ParseResult.State.Skip, "Expected 'is' keyword", (tokens, secondToken));
 
@@ -33,11 +34,9 @@ public class DefineExpression : IParseStuff
             case "list": return scriptInterpreter.RegisterIdentifier(ScriptInterpreter.ScriptableType.List, firstToken.Value);
             case "packet": return scriptInterpreter.RegisterIdentifier(ScriptInterpreter.ScriptableType.Packet, firstToken.Value);
         }
-        
+
         //>> Special case for derived identifiers
         if (thirdToken.Type == Token.TokenType.Identifier) return scriptInterpreter.RegisterIdentifier(ScriptInterpreter.ScriptableType.Identifier, firstToken.Value);
-        
-
 
         return new ParseResult(ParseResult.State.Success, "Successfully defined " + firstToken.Value + " as a " + thirdToken.Value);
     }

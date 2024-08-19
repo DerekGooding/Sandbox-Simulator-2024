@@ -1,4 +1,3 @@
-
 using Sandbox_Simulator_2024.Scripting.Scriptables;
 
 namespace Sandbox_Simulator_2024.Scripting.Parsing.Parsers;
@@ -18,12 +17,11 @@ public class InterfaceExpression : IParseStuff
             match &= tokens.Skip(1).First().Value == "is";
             match &= tokens.Skip(2).First().Value == "interface";
             if (!match) return new ParseResult(ParseResult.State.Skip, "");
-            
+
             //>> Register the interface
             scriptInterpreter.RegisterInterface(tokens.First().Value, new ScriptableInterface(tokens.First().Value));
             return new ParseResult(ParseResult.State.Success, "Registered interface " + tokens.First().Value);
         }
-
 
         if (count < 6) return new ParseResult(ParseResult.State.Skip, "Expected at least 6 tokens (<identifier> is interface has <propertyType> <identifier>), but got: " + count, (tokens, null));
 
@@ -33,10 +31,10 @@ public class InterfaceExpression : IParseStuff
         Token thirdToken = tokensArray[2];
         Token fourthToken = tokensArray[3];
 
-        //>> Make sure the first token is an identifier, 
-        //>> the second token is the 'is' keyword, 
-        //>> the third token is the 'interface' keyword, 
-        //>> the fourth token is a colon, 
+        //>> Make sure the first token is an identifier,
+        //>> the second token is the 'is' keyword,
+        //>> the third token is the 'interface' keyword,
+        //>> the fourth token is a colon,
         //>> and the fifth token is an identifier [PASSED]
         match = true;
         match &= firstToken.Type == Token.TokenType.Identifier;
@@ -65,4 +63,3 @@ public class InterfaceExpression : IParseStuff
         return new ParseResult(ParseResult.State.Success, "Hmmm.");
     }
 }
-

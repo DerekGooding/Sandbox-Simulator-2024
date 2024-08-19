@@ -1,6 +1,4 @@
-
 using System.Collections.Concurrent;
-using Sandbox_Simulator_2024.PrintTools;
 
 namespace Network.Core;
 
@@ -14,7 +12,9 @@ public abstract class Node : IName
     //protected ConcurrentBag<Packet> packetCache = new();
 
     public abstract void Receive(Packet packet);
+
     public abstract void Transmit();
+
     public abstract IEnumerable<T> ReportPackets<T>() where T : Packet;
 
     public virtual void Step()

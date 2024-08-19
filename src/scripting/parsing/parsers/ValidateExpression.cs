@@ -1,4 +1,3 @@
-
 namespace Sandbox_Simulator_2024.Scripting.Parsing.Parsers;
 
 public class ValidateExpression : IParseStuff
@@ -17,16 +16,15 @@ public class ValidateExpression : IParseStuff
             if (token.Type == Token.TokenType.Unknown)
                 return new ParseResult(ParseResult.State.Failure, $"Could not parse the tokens. Token of unknown type found. Token is {token.Value}.", (tokens, token));
         }
-        
+
         //>> Check for non-identifiers in the first token [PASSED]
         if (tokens.First().Type != Token.TokenType.Identifier)
             return new ParseResult(ParseResult.State.Failure, "Expected an identifier as the first token, but got: " + tokens.First().Value, (tokens, tokens.First()));
-            
+
         //>> Check for non-keywords in the second token [PASSED]
         if (tokens.Skip(1).First().Type != Token.TokenType.Keyword)
             return new ParseResult(ParseResult.State.Failure, "Expected a keyword as the second token, but got: " + tokens.Skip(1).First().Value, (tokens, tokens.Skip(1).First()));
-        
+
         return new ParseResult(ParseResult.State.Success, "All tokens are valid.");
     }
 }
-

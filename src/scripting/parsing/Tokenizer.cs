@@ -71,15 +71,14 @@ public static class Tokenizer
             { "of", Token.TokenType.Ignored },
             { "type", Token.TokenType.Ignored },
             { "%", Token.TokenType.Ignored },
-            { "on", Token.TokenType.Ignored },            
+            { "on", Token.TokenType.Ignored },
             { "chance", Token.TokenType.Ignored },
             { "children", Token.TokenType.Ignored },
             { "that", Token.TokenType.Ignored },
             { "an", Token.TokenType.Ignored },
             { "a", Token.TokenType.Ignored },
             { "with", Token.TokenType.Ignored },
-            
-            
+
             // Add other keywords here
         };
 
@@ -94,7 +93,7 @@ public static class Tokenizer
         var tokens = new List<Token>();
         int index = 0;
         int sourceLineNumber = 0;
-        
+
         while (index < input.Length)
         {
             if (char.IsWhiteSpace(input[index]))
@@ -188,5 +187,4 @@ public static class Tokenizer
 
         return tokens;
     }
-
 }

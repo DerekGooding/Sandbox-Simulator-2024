@@ -1,11 +1,11 @@
 ﻿namespace Sandbox_Simulator_2024;
+
 using Sandbox_Simulator_2024.PrintTools;
 using Sandbox_Simulator_2024.Scripting;
-using Network.Core; 
 
-class Program
+internal class Program
 {
-    async static Task Main(string[] args)
+    private static async Task Main(string[] args)
     {
         Print.Clear();
         Console.WriteLine(new string('#', Console.WindowWidth));
@@ -23,8 +23,6 @@ class Program
 
         /*for (int i = 0; i < 100; i++)
         {
-            
-            
             Stats stats = new Stats();
             Print.Line($"Health: {stats.RollHealth()}");
             Print.Line($"Intelligence: {stats.RollIntelligence()}");
@@ -42,7 +40,7 @@ class Program
             Print.Line();
             Print.Line();
         }*/
-        
+
         Print.Line("Welcome to Sandbox Simulator 2024");
 
         ScriptInterpreter interpreter = new ScriptInterpreter(FireStationExampleScript.draft);

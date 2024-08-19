@@ -1,24 +1,25 @@
 namespace Sandbox_Simulator_2024.Scripting.Parsing;
+
 using Sandbox_Simulator_2024.Scripting.Parsing.Parsers;
 
 public class Parser
 {
-    static readonly Token.TokenType[] tokensToSkip = new Token.TokenType[] {
+    private static readonly Token.TokenType[] tokensToSkip = new Token.TokenType[] {
         Token.TokenType.NewLine,
         Token.TokenType.Comment,
         Token.TokenType.Whitespace,
         Token.TokenType.Ignored
     };
 
-    static readonly List<IParseStuff> chainOfResponsibility = [
+    private static readonly List<IParseStuff> chainOfResponsibility = [
         new PrintExpression(),
         new ValidateExpression(),
         new DefineExpression(),
         new InterfaceExpression(),
     ];
 
-    ScriptInterpreter ScriptInterpreter;
-    
+    private ScriptInterpreter ScriptInterpreter;
+
     public Parser(ScriptInterpreter scriptInterpreter)
     {
         ScriptInterpreter = scriptInterpreter;
@@ -52,7 +53,7 @@ public class Parser
         {
             if (token.Type == Token.TokenType.Delimiter)
             {
-                if(!Parse(lineTokens)) return false;
+                if (!Parse(lineTokens)) return false;
                 lineTokens.Clear();
             }
             else if (tokensToSkip.Contains(token.Type)) continue;

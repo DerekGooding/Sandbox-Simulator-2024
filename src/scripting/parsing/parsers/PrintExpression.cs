@@ -12,38 +12,49 @@ namespace Sandbox_Simulator_2024.Scripting.Parsing.Parsers
                 {
                     case Token.TokenType.Delimiter:
                         break;
-                    case Token.TokenType.Keyword: 
-                        Print(token, ConsoleColor.DarkBlue); 
+
+                    case Token.TokenType.Keyword:
+                        Print(token, ConsoleColor.DarkBlue);
                         break;
-                    case Token.TokenType.Identifier: 
-                        Print(token, ConsoleColor.DarkGreen); 
+
+                    case Token.TokenType.Identifier:
+                        Print(token, ConsoleColor.DarkGreen);
                         break;
-                    case Token.TokenType.Operator: 
-                        Print(token, ConsoleColor.White); 
+
+                    case Token.TokenType.Operator:
+                        Print(token, ConsoleColor.White);
                         break;
-                    case Token.TokenType.Literal: 
-                        Print(token, ConsoleColor.Yellow); 
+
+                    case Token.TokenType.Literal:
+                        Print(token, ConsoleColor.Yellow);
                         break;
-                    case Token.TokenType.String: 
-                        Print(token, ConsoleColor.Magenta); 
+
+                    case Token.TokenType.String:
+                        Print(token, ConsoleColor.Magenta);
                         break;
-                    case Token.TokenType.Comment: 
-                        Print(token, ConsoleColor.Gray); 
+
+                    case Token.TokenType.Comment:
+                        Print(token, ConsoleColor.Gray);
                         break;
-                    case Token.TokenType.Whitespace: 
-                        Print(token, ConsoleColor.White); 
+
+                    case Token.TokenType.Whitespace:
+                        Print(token, ConsoleColor.White);
                         break;
-                    case Token.TokenType.NewLine: 
-                        Console.WriteLine(); 
+
+                    case Token.TokenType.NewLine:
+                        Console.WriteLine();
                         break;
-                    case Token.TokenType.Ignored: 
-                        Print(token, ConsoleColor.DarkGray); 
+
+                    case Token.TokenType.Ignored:
+                        Print(token, ConsoleColor.DarkGray);
                         break;
-                    case Token.TokenType.Unknown: 
-                        Print("�", ConsoleColor.Red); 
+
+                    case Token.TokenType.Unknown:
+                        Print("�", ConsoleColor.Red);
                         break;
-                    default: 
-                        Print($"�{token.Value}�", ConsoleColor.Red); 
+
+                    default:
+                        Print($"�{token.Value}�", ConsoleColor.Red);
                         break;
                 }
             }
@@ -52,8 +63,9 @@ namespace Sandbox_Simulator_2024.Scripting.Parsing.Parsers
             return new ParseResult(ParseResult.State.Success, "We printed all tokens :)");
         }
 
-        static void Print(Token token, ConsoleColor color) => Print(token.Value, color);
-        static void Print(string message, ConsoleColor color)
+        private static void Print(Token token, ConsoleColor color) => Print(token.Value, color);
+
+        private static void Print(string message, ConsoleColor color)
         {
             Console.ForegroundColor = color;
             Console.Write(message + " ");

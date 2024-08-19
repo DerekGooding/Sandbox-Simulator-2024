@@ -16,7 +16,7 @@ public class Router : Node
         }
     }
 
-    ConcurrentDictionary<string, RoutingEntry> routingTable = new();
+    private ConcurrentDictionary<string, RoutingEntry> routingTable = new();
 
     public Router(string name)
     {
@@ -36,7 +36,7 @@ public class Router : Node
     public override void Receive(Packet packet)
     {
         //Console.WriteLine($"{Name} received packet from last hop {packet.LastHop}");
-        if(packet.Destination == Name) // If the packet is for this router
+        if (packet.Destination == Name) // If the packet is for this router
         {
             Network.Delivered(packet);
             return;
@@ -81,7 +81,7 @@ public class Router : Node
         }
         else
         {
-            if(chance) Console.WriteLine($"No route to {packet.Destination} from {Name} found, using random route");
+            if (chance) Console.WriteLine($"No route to {packet.Destination} from {Name} found, using random route");
             //else Console.WriteLine($"Loop evasion, using random route");
             var neighbours = Network.GetNeighbours(Name);
             if (neighbours.Count == 0) throw new ArgumentException("Router has no neighbours");
@@ -97,8 +97,8 @@ public class Router : Node
         Parallel.ForEach(neighbours, neighbour =>
         {
             var neighborNode = Network.GetNode(neighbour) as Router;
-            if(neighborNode is null) return;
-            
+            if (neighborNode is null) return;
+
             updated |= neighborNode.UpdateRoutingTable(Name, routingTable);
         });
         return updated;

@@ -1,8 +1,10 @@
 namespace Network.Core;
 
-public interface IUDP { }
+public interface IUDP
+{ }
 
-public interface IEntity { }
+public interface IEntity
+{ }
 
 public interface IName
 {
