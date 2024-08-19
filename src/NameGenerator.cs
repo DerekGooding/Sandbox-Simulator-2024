@@ -5,13 +5,13 @@ public static class NameGenerator
     private const string consonants = "bcdfghjklmnprstvwxz";
     private const string vowels = "aeiouaeiouaeioueeeeeaay";
 
-    private static readonly string[] NameEnders = {
+    private static readonly string[] NameEnders = [
         "a", "ia", "en", "on",
         "ar", "or", "ur", "ir",
         "el", "il", "ol", "ul",
         "es", "is", "os", "us",
         "an", "in", "on", "un",
-    };
+    ];
 
     private static readonly string[] Awks = [
         "pf", "bv", "lp", "rp",
@@ -44,36 +44,32 @@ public static class NameGenerator
         "edo", "otu", "aki",
     ];
 
-    private static Random random = new();
-
     private static HashSet<string> usedNames = new();
+
+    private static Random r = Random.Shared;
 
     public static string GenerateName()
     {
-        return GenerateName(random);
-    }
-
-    public static string GenerateName(Random r)
-    {
+        
         try
         {
             string name = "";
 
             // Start with a partial name
-            name += PartialName(r);
+            name += PartialName();
 
             // Add a random number of partial names
             int numParts = r.Next(0, 2);
             for (int i = 0; i < numParts; i++)
             {
-                name += PartialName(r);
+                name += PartialName();
             }
 
             // Chop off the end bits maybe
             if (name.Length > 9)
             {
-                int startIndex = random.Next(0, 3);
-                int endIndex = random.Next(0, 3);
+                int startIndex = r.Next(0, 3);
+                int endIndex = r.Next(0, 3);
 
                 // Chop off the end bits
                 name = name.Substring(0, name.Length - endIndex);
@@ -82,10 +78,10 @@ public static class NameGenerator
                 name = name.Substring(startIndex);
             }
 
-            if (random.NextSingle() > 0.5f)
+            if (r.NextSingle() > 0.5f)
             {
                 // If the last letter is a vowel, add a consonant
-                if (random.NextSingle() > 0.5f && vowels.Contains(name.Last())) name += GenerateConsonant(r);
+                if (r.NextSingle() > 0.5f && vowels.Contains(name[^1])) name += GenerateConsonant();
                 name += NameEnders[r.Next(0, NameEnders.Length)];
             }
 
@@ -150,51 +146,46 @@ public static class NameGenerator
             }
 
             // If the name is too short, try again
-            if (name.Length <= 1) return GenerateName(r);
+            if (name.Length <= 1) return GenerateName();
 
             // Capitalize the first letter and return
-            string finalCandidateName = name.First().ToString().ToUpper() + name.Substring(1);
-            if (usedNames.Contains(finalCandidateName)) return GenerateName(r);
+            string finalCandidateName = string.Concat(name[0].ToString().ToUpper(), name.AsSpan(1));
+            if (usedNames.Contains(finalCandidateName)) return GenerateName();
             usedNames.Add(finalCandidateName);
             return finalCandidateName;
         }
         catch (Exception)
         {
-            return GenerateName(r);
+            return GenerateName();
         }
     }
 
-    private static string PartialName(Random r)
+    private static string PartialName()
     {
+
         if (r.NextSingle() > 0.5f)
         {
-            return GenerateConsonant(r) + OneOrTwoVowels(r) + GenerateConsonant(r);
+            return GenerateConsonant() + OneOrTwoVowels() + GenerateConsonant();
         }
         else
         {
-            return GenerateVowel(r) + OneOrTwoConsonants(r) + GenerateVowel(r);
+            return GenerateVowel() + OneOrTwoConsonants() + GenerateVowel();
         }
     }
 
-    private static string OneOrTwoConsonants(Random r)
+    private static string OneOrTwoConsonants()
     {
-        if (r.NextSingle() > 0.5f) return GenerateConsonant(r);
-        else return GenerateConsonant(r).ToString() + GenerateConsonant(r);
+        if (r.NextSingle() > 0.5f) return GenerateConsonant();
+        else return GenerateConsonant() + GenerateConsonant();
     }
 
-    private static string OneOrTwoVowels(Random r)
+    private static string OneOrTwoVowels()
     {
-        if (r.NextSingle() > 0.5f) return GenerateVowel(r);
-        else return GenerateVowel(r).ToString() + GenerateVowel(r);
+        if (r.NextSingle() > 0.5f) return GenerateVowel();
+        else return GenerateVowel() + GenerateVowel();
     }
 
-    private static string GenerateConsonant(Random r)
-    {
-        return consonants[r.Next(0, consonants.Length)].ToString();
-    }
+    private static string GenerateConsonant() => consonants[r.Next(0, consonants.Length)].ToString();
 
-    private static string GenerateVowel(Random r)
-    {
-        return vowels[r.Next(0, vowels.Length)].ToString();
-    }
+    private static string GenerateVowel() => vowels[r.Next(0, vowels.Length)].ToString();
 }
