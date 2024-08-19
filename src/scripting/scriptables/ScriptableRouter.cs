@@ -1,5 +1,5 @@
-namespace Sandbox_Simulator_2024.Scripting.Scriptables;
-using Network.Core;
+namespace Sandbox_Simulator_2024.src.scripting.scriptables;
+using Sandbox_Simulator_2024.src.backend.network;
 using Identifier = string;
 
 public class ScriptableRouter : Router, IScriptable

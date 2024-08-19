@@ -1,4 +1,4 @@
-namespace Sandbox_Simulator_2024.Scripting.Parsing;
+namespace Sandbox_Simulator_2024.src.scripting.parsing;
 
 public class ParseResult
 {
@@ -31,7 +31,7 @@ public class ParseResult
 
         //>> Print the error message line
         int count = expression.Count();
-        Console.ForegroundColor = ConsoleColor.Red;
+        ForegroundColor = ConsoleColor.Red;
         if (count >= 1)
         {
             Token firstToken = expression.First();
@@ -42,24 +42,24 @@ public class ParseResult
                 ? $"Error on line: {firstToken.SourceLineNumber}"
                 : $"Error on lines: {firstToken.SourceLineNumber} to {lastToken.SourceLineNumber}";
 
-            Console.WriteLine(errorMessage);
+            WriteLine(errorMessage);
         }
 
         //>> Print the error message
-        Console.ForegroundColor = ConsoleColor.DarkRed;
-        Console.WriteLine(Message);
+        ForegroundColor = ConsoleColor.DarkRed;
+        WriteLine(Message);
 
         //>> Print the effected expression and/or token
         foreach (var token in expression)
         {
-            Console.ForegroundColor = ConsoleColor.DarkYellow;
+            ForegroundColor = ConsoleColor.DarkYellow;
             if (effectedToken != null && token == effectedToken)
-                Console.ForegroundColor = ConsoleColor.DarkRed;
-            Console.Write(token.Value + " ");
+                ForegroundColor = ConsoleColor.DarkRed;
+            Write(token.Value + " ");
         }
-        Console.WriteLine();
+        WriteLine();
 
         //>> House cleaning
-        Console.ResetColor();
+        ResetColor();
     }
 }

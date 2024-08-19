@@ -1,6 +1,6 @@
 namespace Sandbox_Simulator_2024.Scripting;
 
-public class FireStationExampleScript
+public static class FireStationExampleScript
 {
     public static string draft = """
 ### FIRE STATION EXAMPLE SCRIPT ###

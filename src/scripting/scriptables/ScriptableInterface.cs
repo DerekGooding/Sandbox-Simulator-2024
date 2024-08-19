@@ -1,4 +1,4 @@
-namespace Sandbox_Simulator_2024.Scripting.Scriptables;
+namespace Sandbox_Simulator_2024.src.scripting.scriptables;
 
 using System;
 using Identifier = string;
@@ -27,8 +27,8 @@ public class ScriptableInterface : IScriptable
     {
         if (properties.ContainsKey(propertyName))
         {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.Write("(duplicate) ");
+            ForegroundColor = ConsoleColor.Red;
+            Write("(duplicate) ");
             return false;
         }
 
@@ -55,13 +55,13 @@ public class ScriptableInterface : IScriptable
                 break;
 
             default:
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.Write("(invalid) ");
+                ForegroundColor = ConsoleColor.Red;
+                Write("(invalid) ");
                 return false;
         }
 
-        Console.ForegroundColor = ConsoleColor.White;
-        Console.Write($"(property {propertyType} added) ");
+        ForegroundColor = ConsoleColor.White;
+        Write($"(property {propertyType} added) ");
         return true;
     }
 }

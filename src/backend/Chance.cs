@@ -1,4 +1,4 @@
-namespace Sandbox_Simulator_2024;
+namespace Sandbox_Simulator_2024.src.backend;
 
 public class Chance
 {

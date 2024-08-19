@@ -1,7 +1,8 @@
 using System.Linq;
 
-namespace Network.Core;
+namespace Sandbox_Simulator_2024.src.backend.network;
 
+using Sandbox_Simulator_2024.src;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Reflection;
@@ -74,7 +75,7 @@ public class Network
 
                 int currentHour = tick / hour;
                 int currentDay = tick / day;
-                int hourOfTheDay = (tick % day) / hour;
+                int hourOfTheDay = tick % day / hour;
                 string age = string.Empty;
 
                 string AddS(int value, string s) => value == 1 ? $"{value} {s}" : $"{value} {s}s";
@@ -300,16 +301,16 @@ public class Network
         if (!allowed) throw new ArgumentException($"Invalid link: one or both nodes do not exist {source} {destination}");
         var sourceNode = nodes[source];
         var destNode = nodes[destination];
-        _ = (
-            ((sourceNode is Router || sourceNode.GetType().IsSubclassOf(typeof(Router))) &&
-            (destNode is Router || destNode.GetType().IsSubclassOf(typeof(Router))))
+        _ =
+            (sourceNode is Router || sourceNode.GetType().IsSubclassOf(typeof(Router))) &&
+            (destNode is Router || destNode.GetType().IsSubclassOf(typeof(Router)))
             ||
-            ((sourceNode is Router || sourceNode.GetType().IsSubclassOf(typeof(Router))) &&
-            (destNode is Host || destNode.GetType().IsSubclassOf(typeof(Host))))
+            (sourceNode is Router || sourceNode.GetType().IsSubclassOf(typeof(Router))) &&
+            (destNode is Host || destNode.GetType().IsSubclassOf(typeof(Host)))
             ||
-            ((sourceNode is Host || sourceNode.GetType().IsSubclassOf(typeof(Host))) &&
-            (destNode is Router || destNode.GetType().IsSubclassOf(typeof(Router))))
-        );
+            (sourceNode is Host || sourceNode.GetType().IsSubclassOf(typeof(Host))) &&
+            (destNode is Router || destNode.GetType().IsSubclassOf(typeof(Router)))
+        ;
 
         // Make sure the nodes already have entries
         if (!links.ContainsKey(source)) links.TryAdd(source, []);
@@ -365,7 +366,7 @@ public class Network
         {
             foreach (Node otherNode in nodes)
             {
-                if (node == otherNode || (node is Host && otherNode is Host)) continue;
+                if (node == otherNode || node is Host && otherNode is Host) continue;
                 AddLink(node.Name, otherNode.Name);
             }
         }

@@ -1,4 +1,4 @@
-namespace Sandbox_Simulator_2024.Scripting;
+namespace Sandbox_Simulator_2024.src.scripting.parsing;
 
 using System.Collections.Generic;
 using System.Text.RegularExpressions;

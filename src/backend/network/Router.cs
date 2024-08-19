@@ -1,6 +1,6 @@
 using System.Collections.Concurrent;
 
-namespace Network.Core;
+namespace Sandbox_Simulator_2024.src.backend.network;
 
 public class Router : Node
 {
@@ -73,7 +73,7 @@ public class Router : Node
         }
         else
         {
-            if (chance) Console.WriteLine($"No route to {packet.Destination} from {Name} found, using random route");
+            if (chance) WriteLine($"No route to {packet.Destination} from {Name} found, using random route");
             //else Console.WriteLine($"Loop evasion, using random route");
             var neighbours = Network.GetNeighbours(Name);
             if (neighbours.Count == 0) throw new ArgumentException("Router has no neighbours");

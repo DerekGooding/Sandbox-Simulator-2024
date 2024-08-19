@@ -1,6 +1,6 @@
-namespace Sandbox_Simulator_2024.PrintTools;
+namespace Sandbox_Simulator_2024.src;
 
-using Network.Core;
+using Sandbox_Simulator_2024.src.backend.network;
 using System.Collections.Concurrent;
 
 public static class Print

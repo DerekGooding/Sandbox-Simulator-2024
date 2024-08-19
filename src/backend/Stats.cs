@@ -1,4 +1,4 @@
-namespace Sandbox_Simulator_2024;
+namespace Sandbox_Simulator_2024.src.backend;
 
 // Applicable to any creature entity in the game
 public class Stats
@@ -11,7 +11,7 @@ public class Stats
         float u1 = Random.Shared.NextSingle();
         float u2 = Random.Shared.NextSingle();
         float z0 = MathF.Sqrt(-2.0f * MathF.Log(u1)) * MathF.Cos(2.0f * MathF.PI * u2);
-        float value = mean + (sigma * z0);
+        float value = mean + sigma * z0;
 
         // Clamp the result between 0 and 1 to keep within bounds
         value = MathF.Max(0, MathF.Min(1, value));
@@ -98,11 +98,11 @@ public class Stats
 
     public bool RollSurvivalOdds() => Random.Shared.NextSingle() < DetermineSurvivalOdds();
 
-    public float DetermineSurvivalOdds() => ((traits.variable.Health + traits.variable.Intelligence + traits.immutable.Luck) / 3f);
+    public float DetermineSurvivalOdds() => (traits.variable.Health + traits.variable.Intelligence + traits.immutable.Luck) / 3f;
 
     public bool RollCharisma() => Random.Shared.NextSingle() < DetermineCharisma();
 
-    public float DetermineCharisma() => traits.variable.Health * Math.Max(1f, ((traits.variable.Intelligence + traits.immutable.Luck) / 2f) + traits.variable.SocialFulfillment);
+    public float DetermineCharisma() => traits.variable.Health * Math.Max(1f, (traits.variable.Intelligence + traits.immutable.Luck) / 2f + traits.variable.SocialFulfillment);
 
     public bool RollStrength() => Random.Shared.NextSingle() < DetermineStrength();
 
@@ -110,11 +110,11 @@ public class Stats
 
     public bool RollMentalHealth() => Random.Shared.NextSingle() < DetermineMentalHealth();
 
-    public float DetermineMentalHealth() => Math.Min(1f - traits.immutable.Aggression, Math.Min((1f - traits.immutable.Criminality), (1f - traits.variable.Addiction))) * Math.Max(((traits.variable.Intelligence + traits.immutable.Luck) / 2f), traits.variable.SocialFulfillment);
+    public float DetermineMentalHealth() => Math.Min(1f - traits.immutable.Aggression, Math.Min(1f - traits.immutable.Criminality, 1f - traits.variable.Addiction)) * Math.Max((traits.variable.Intelligence + traits.immutable.Luck) / 2f, traits.variable.SocialFulfillment);
 
     public bool RollEnergy() => Random.Shared.NextSingle() < DetermineEnergy();
 
-    public float DetermineEnergy() => (1f - traits.variable.Hunger) * Math.Max(0, ((traits.variable.Energy + traits.immutable.Happiness) / 2f) - traits.variable.Addiction);
+    public float DetermineEnergy() => (1f - traits.variable.Hunger) * Math.Max(0, (traits.variable.Energy + traits.immutable.Happiness) / 2f - traits.variable.Addiction);
 
     public bool RollHappiness() => Random.Shared.NextSingle() < DetermineHappiness();
 
@@ -122,7 +122,7 @@ public class Stats
 
     public bool RollCriminality() => Random.Shared.NextSingle() < DetermineCriminality();
 
-    public float DetermineCriminality() => (1f - ((traits.immutable.Empathy + traits.variable.Intelligence) / 2f)) * Math.Max(traits.immutable.Criminality, traits.immutable.Luck);
+    public float DetermineCriminality() => (1f - (traits.immutable.Empathy + traits.variable.Intelligence) / 2f) * Math.Max(traits.immutable.Criminality, traits.immutable.Luck);
 
     public bool RollAggression() => Random.Shared.NextSingle() < DetermineAggression();
 

@@ -1,4 +1,6 @@
-namespace Sandbox_Simulator_2024.Scripting.Parsing;
+using Sandbox_Simulator_2024.src.scripting;
+
+namespace Sandbox_Simulator_2024.src.scripting.parsing;
 
 public interface IParseStuff
 {

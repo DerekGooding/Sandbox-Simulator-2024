@@ -1,4 +1,6 @@
-﻿namespace Sandbox_Simulator_2024;
+﻿using Sandbox_Simulator_2024.src.scripting;
+
+namespace Sandbox_Simulator_2024.src;
 
 internal static class Program
 {

@@ -1,6 +1,7 @@
-namespace Sandbox_Simulator_2024.Scripting.Parsing;
+namespace Sandbox_Simulator_2024.src.scripting.parsing;
 
 using Sandbox_Simulator_2024.Scripting.Parsing.Parsers;
+using Sandbox_Simulator_2024.src.scripting;
 
 public class Parser
 {
@@ -28,8 +29,8 @@ public class Parser
     public ParseResult Parse(string script)
     {
         var tokens = Tokenizer.Tokenize(script);
-        Console.ResetColor();
-        Console.WriteLine("Parser found " + tokens.Count + " tokens");
+        ResetColor();
+        WriteLine("Parser found " + tokens.Count + " tokens");
         ParseResult currentResult = new ParseResult(ParseResult.State.Default, "");
 
         IterateExpressions(tokens, (expression) =>
@@ -40,7 +41,7 @@ public class Parser
                 if (currentResult.state == ParseResult.State.Failure) return false;
                 //else if (currentResult.state == ParseResult.State.Skip) continue;
             }
-            Console.WriteLine();
+            WriteLine();
             return true;
         });
         return new ParseResult(ParseResult.State.Success, "Parsing successful");

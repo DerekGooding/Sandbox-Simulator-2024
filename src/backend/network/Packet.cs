@@ -1,4 +1,4 @@
-namespace Network.Core;
+namespace Sandbox_Simulator_2024.src.backend.network;
 
 public class Packet : IName
 {

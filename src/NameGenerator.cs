@@ -1,4 +1,4 @@
-namespace Sandbox_Simulator_2024;
+namespace Sandbox_Simulator_2024.src;
 
 public static class NameGenerator
 {
@@ -50,7 +50,7 @@ public static class NameGenerator
 
     public static string GenerateName()
     {
-        
+
         try
         {
             string name = "";
@@ -165,10 +165,10 @@ public static class NameGenerator
             ? GenerateConsonant() + OneOrTwoVowels() + GenerateConsonant()
             : GenerateVowel() + OneOrTwoConsonants() + GenerateVowel();
 
-    private static string OneOrTwoConsonants() 
+    private static string OneOrTwoConsonants()
         => r.NextSingle() > 0.5f ? GenerateConsonant() : GenerateConsonant() + GenerateConsonant();
 
-    private static string OneOrTwoVowels() 
+    private static string OneOrTwoVowels()
         => r.NextSingle() > 0.5f ? GenerateVowel() : GenerateVowel() + GenerateVowel();
 
     private static string GenerateConsonant() => consonants[r.Next(0, consonants.Length)].ToString();

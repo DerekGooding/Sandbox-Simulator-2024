@@ -1,6 +1,6 @@
-using Sandbox_Simulator_2024.Scripting.Scriptables;
+using Sandbox_Simulator_2024.src.scripting.scriptables;
 
-namespace Sandbox_Simulator_2024.Scripting.Parsing.Parsers;
+namespace Sandbox_Simulator_2024.src.scripting.parsing.parsers;
 
 public class InterfaceExpression : IParseStuff
 {
@@ -23,7 +23,11 @@ public class InterfaceExpression : IParseStuff
             return new ParseResult(ParseResult.State.Success, "Registered interface " + tokens.First().Value);
         }
 
-        if (count < 6) return new ParseResult(ParseResult.State.Skip, "Expected at least 6 tokens (<identifier> is interface has <propertyType> <identifier>), but got: " + count, (tokens, null));
+        if (count < 6)
+        {
+            return new ParseResult(ParseResult.State.Skip,
+                "Expected at least 6 tokens (<identifier> is interface has <propertyType> <identifier>), but got: " + count, (tokens, null));
+        }
 
         var tokensArray = tokens.ToArray();
         Token firstToken = tokensArray[0];
@@ -46,16 +50,30 @@ public class InterfaceExpression : IParseStuff
         //>> Create a new ScriptableInterface
         ScriptableInterface scriptableInterface = new ScriptableInterface(firstToken.Value);
 
-        //>> Parse the properties, injest two tokens at a time, until we run out, ther first token should be a property type, and the second should be an identifier
+        //>> Parse the properties, ingest two tokens at a time, until we run out, their first token should be a property type, and the second should be an identifier
         for (int i = 4; i < count; i += 2)
         {
-            if (i + 1 >= count) return new ParseResult(ParseResult.State.Failure, "Expected a property type and an identifier, but ran out of tokens", (tokens, tokensArray[i]));
+            if (i + 1 >= count)
+            {
+                return new ParseResult(ParseResult.State.Failure,
+                    "Expected a property type and an identifier, but ran out of tokens", (tokens, tokensArray[i]));
+            }
+
             Token propertyType = tokensArray[i];
             Token propertyName = tokensArray[i + 1];
-            if (propertyType.Type != Token.TokenType.Keyword || propertyName.Type != Token.TokenType.Identifier) return new ParseResult(ParseResult.State.Failure, "Expected a property type and an identifier, but got: " + propertyType.Value + " and " + propertyName.Value, (tokens, tokensArray[i]));
+            if (propertyType.Type != Token.TokenType.Keyword || propertyName.Type != Token.TokenType.Identifier)
+            {
+                return new ParseResult(ParseResult.State.Failure,
+                    $"Expected a property type and an identifier, but got: {propertyType.Value} and {propertyName.Value}", (tokens, tokensArray[i]));
+            }
+
             bool success = scriptableInterface.AddProperty(propertyType.Value, propertyName.Value);
             scriptInterpreter.RegisterIdentifier(ScriptInterpreter.ScriptableType.Identifier, propertyName.Value);
-            if (!success) return new ParseResult(ParseResult.State.Failure, "Failed to add property " + propertyName.Value + " of type " + propertyType.Value, (tokens, tokensArray[i]));
+            if (!success)
+            {
+                return new ParseResult(ParseResult.State.Failure,
+                    "Failed to add property " + propertyName.Value + " of type " + propertyType.Value, (tokens, tokensArray[i]));
+            }
         }
 
         //>> Register the interface abd return

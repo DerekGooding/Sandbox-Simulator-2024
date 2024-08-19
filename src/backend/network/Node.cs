@@ -1,6 +1,6 @@
 using System.Collections.Concurrent;
 
-namespace Network.Core;
+namespace Sandbox_Simulator_2024.src.backend.network;
 
 public abstract class Node : IName
 {
@@ -25,6 +25,6 @@ public abstract class Node : IName
         ingressPackets.Clear();
     }
 
-    public IEnumerable<T> GetPackets<T>() where T : Packet 
+    public IEnumerable<T> GetPackets<T>() where T : Packet
         => egressPackets.OfType<T>().Concat(ingressPackets.OfType<T>()).Concat(ReportPackets<T>());
 }
