@@ -1,23 +1,20 @@
 ﻿namespace Sandbox_Simulator_2024;
 
-using Sandbox_Simulator_2024.PrintTools;
-using Sandbox_Simulator_2024.Scripting;
-
-internal class Program
+internal static class Program
 {
-    private static async Task Main(string[] args)
+    private static async Task Main()
     {
         Print.Clear();
-        Console.WriteLine(new string('#', Console.WindowWidth));
-        Console.WriteLine(new string('#', Console.WindowWidth));
-        Console.WriteLine(new string('#', Console.WindowWidth));
-        Console.WriteLine(new string('#', Console.WindowWidth));
-        Console.WriteLine(new string('#', Console.WindowWidth));
-        Console.WriteLine(new string('#', Console.WindowWidth));
-        Console.WriteLine(new string('#', Console.WindowWidth));
-        Console.WriteLine(new string('#', Console.WindowWidth));
-        Console.WriteLine(new string('#', Console.WindowWidth));
-        Console.WriteLine(new string('#', Console.WindowWidth));
+        WriteLine(new string('#', WindowWidth));
+        WriteLine(new string('#', WindowWidth));
+        WriteLine(new string('#', WindowWidth));
+        WriteLine(new string('#', WindowWidth));
+        WriteLine(new string('#', WindowWidth));
+        WriteLine(new string('#', WindowWidth));
+        WriteLine(new string('#', WindowWidth));
+        WriteLine(new string('#', WindowWidth));
+        WriteLine(new string('#', WindowWidth));
+        WriteLine(new string('#', WindowWidth));
         Print.Immediate("Sandbox Simulator 2024");
         Print.ConsoleResetColor();
 
@@ -27,7 +24,7 @@ internal class Program
             Print.Line($"Health: {stats.RollHealth()}");
             Print.Line($"Intelligence: {stats.RollIntelligence()}");
             Print.Line($"Luck: {stats.RollLuck()}");
-            Print.Line($"Addiction Prepensity: {stats.RollAddictionPrepensity()}");
+            Print.Line($"Addiction Propensity: {stats.RollAddictionPropensity()}");
             Print.Line($"Empathy: {stats.RollEmpathy()}");
             Print.Line($"Survival Odds: {stats.RollSurvivalOdds()}");
             Print.Line($"Charisma: {stats.RollCharisma()}");
@@ -43,7 +40,7 @@ internal class Program
 
         Print.Line("Welcome to Sandbox Simulator 2024");
 
-        ScriptInterpreter interpreter = new ScriptInterpreter(FireStationExampleScript.draft);
+        ScriptInterpreter interpreter = new(FireStationExampleScript.draft);
         //await Network.Start("Test Net");
 
         await Task.Delay(-1);
